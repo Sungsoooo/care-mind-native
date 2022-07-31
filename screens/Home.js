@@ -1,8 +1,40 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {StackNavigationProp} from '@react-navigation/stack';
+import React, {useEffect} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
+import {
+  checkMultiple,
+  PERMISSIONS,
+  request,
+  RESULTS,
+} from 'react-native-permissions';
 
 export function Home({navigation}) {
+  if (Platform.OS === 'ios') {
+    checkMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.PHOTO_LIBRARY]).then(
+      statuses => {
+        if (statuses[PERMISSIONS.IOS.CAMERA] !== 'granted') {
+          request(PERMISSIONS.IOS.CAMERA);
+        }
+
+        if (statuses[PERMISSIONS.IOS.PHOTO_LIBRARY]) {
+          request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+        }
+      },
+    );
+  } else {
+    checkMultiple([
+      PERMISSIONS.ANDROID.CAMERA,
+      PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    ]).then(statuses => {
+      if (statuses[PERMISSIONS.ANDROID.CAMERA] !== 'granted') {
+        request(PERMISSIONS.ANDROID.CAMERA);
+      }
+
+      if (statuses[PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE]) {
+        request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+      }
+    });
+  }
+
   return (
     <View style={s.homeContainer}>
       <TouchableOpacity

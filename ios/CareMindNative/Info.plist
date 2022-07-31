@@ -55,9 +55,5 @@
     <string>Camera를 사용하려면 권한에 동의해주세요.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>사진첩에 접근하려면 권한에 동의해주세요.</string>
-  <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>사진첩에 사진을 저장하려면 권한에 동의해주세요.</string>
-  <key>NSMicrophoneUsageDescription</key>
-    <string>비디오를 사용하려면 권한에 동의해주세요.</string>
 </dict>
 </plist>
