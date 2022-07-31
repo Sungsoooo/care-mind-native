@@ -1,11 +1,6 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
-import {
-  checkMultiple,
-  PERMISSIONS,
-  request,
-  RESULTS,
-} from 'react-native-permissions';
+import {checkMultiple, PERMISSIONS, request} from 'react-native-permissions';
 
 export function Home({navigation}) {
   if (Platform.OS === 'ios') {
