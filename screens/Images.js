@@ -34,14 +34,16 @@ export function Images({navigation}) {
     <View>
       <ScrollView>
         {result?.assets &&
-          result?.assets.map(({uri}) => (
-            <View key={uri} style={s.image}>
+          result?.assets.map(e => (
+            <View key={e.uri} style={s.imageWrapper}>
               <Image
                 resizeMode="cover"
                 resizeMethod="scale"
-                style={{width: 200, height: 200}}
-                source={{uri: uri}}
+                style={s.image}
+                source={{uri: e.uri}}
               />
+              <Text>fileName: {e.fileName}</Text>
+              <Text>fileSize: {e.fileSize}</Text>
             </View>
           ))}
         <View style={s.buttonWrapper}>
@@ -58,6 +60,10 @@ export function Images({navigation}) {
 }
 
 const s = StyleSheet.create({
+  imageWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   image: {
     width: 200,
     height: 200,
