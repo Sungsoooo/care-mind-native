@@ -1,13 +1,18 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '12.4'
+deployment_target = Gem::Version.new('12.4')
+platform :ios, deployment_target
 install! 'cocoapods', :deterministic_uuids => false
 
 production = ENV["PRODUCTION"] == "1"
 
 target 'CareMindNative' do
   config = use_native_modules!
+
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
 
   # Flags change depending on the env values.
   flags = get_default_flags()
@@ -25,16 +30,37 @@ target 'CareMindNative' do
 
   target 'CareMindNativeTests' do
     inherit! :complete
+    permissions_path = '../node_modules/react-native-permissions/ios'
+    pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+    pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+
     # Pods for testing
   end
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
+      if target.name.eql?('RNPermissions') || target.name.start_with?('Permission-')
+      def target.build_type;
+        # Uncomment the line corresponding to your CocoaPods version
+        # Pod::BuildType.static_library # >= 1.9
+        # Pod::Target::BuildType.static_library # < 1.9
+      end
+    end
+      case target.name
+        # Ignore RCT-Folly because it only works with 9.0 as a deployment target
+        when 'RCT-Folly'
+          next
+        else 
+        target.build_configurations.each do |config|
+          current_pod_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+          pod_ios_deployment_target = Gem::Version.new(current_pod_target)
+          if pod_ios_deployment_target <= deployment_target
+            config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+          end
+        end
       end
     end
     react_native_post_install(installer)
-    # __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
